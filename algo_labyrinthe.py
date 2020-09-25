@@ -8,6 +8,7 @@ labyrinthe = [[00, -1, 00, 00, 00, 00, 00],
 
 movecount = 0
 
+
 def displaylaby(labyrinthe):
     for y in range(0, 6):
         print(labyrinthe[y])
@@ -72,6 +73,6 @@ def move(actualposition, nextposition):
 
 if __name__ == '__main__':
     startposition = [0, 0]
-    nextposition = [0,0]
+    nextposition = [0, 0]
     displaylaby(labyrinthe)
     move(startposition, nextposition)

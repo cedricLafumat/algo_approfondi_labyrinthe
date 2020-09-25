@@ -23,8 +23,8 @@ def move(actualposition):
         # si ma position à un marqueur, je reviens à ma position précédente
         if (labyrinthe[actualposition[0]][actualposition[1]]) != 0:
             del historic[len(historic) - 1]
+            print("je reviens à la position {} ".format(historic[len(historic) - 1]))
             actualposition = historic[len(historic) - 1]
-            print("je reviens à la position {} ".format(actualposition))
         # sinon je mets un marqueur
         else:
             movecount += 1
