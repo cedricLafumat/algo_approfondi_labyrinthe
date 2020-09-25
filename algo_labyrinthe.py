@@ -1,110 +1,77 @@
-labyrinthe = [[0, 1, 0, 0, 0, 0, 0],
-              [0, 1, 0, 1, 1, 0, 1],
-              [0, 1, 0, 1, 'G', 0, 0],
-              [0, 0, 0, 0, 1, 1, 0],
-              [0, 1, 0, 1, 0, 0, 0],
-              [0, 1, 0, 0, 0, 1, 0]]
+labyrinthe = [[00, -1, 00, 00, 00, 00, 00],
+              [00, -1, 00, -1, -1, 00, -1],
+              [00, -1, 00, -1, 'G', 00, 00],
+              [00, 00, 00, 00, -1, -1, 00],
+              [00, -1, 00, -1, 00, 00, 00],
+              [00, -1, 00, 00, 00, -1, 00]]
 
+
+movecount = 0
 
 def displaylaby(labyrinthe):
     for y in range(0, 6):
         print(labyrinthe[y])
 
 
-def move(actualposition):
-    if labyrinthe[actualposition[0]][actualposition[1]] == 'G':
-        print("j'ai gagné")
-        return
-    if actualposition[0] + 1 > len(labyrinthe) - 1 or (labyrinthe[actualposition[0] +1][actualposition[1]] != 0 and
-                                                       labyrinthe[actualposition[0] +1][actualposition[1]] != 'G'):
-        
-#
-# def move(actualposition, movecount, crossroad):
-#     if labyrinthe[actualposition[0]][actualposition[1]] == 'G':
-#         print("j'ai gagné")
-#         return
-#     print("je n'ai pas gagné")
-#     movecount += 1
-#     labyrinthe[actualposition[0]][actualposition[1]] = movecount
-#     displaylaby(labyrinthe)
-#     possiblePath = checkAllDirection(actualposition)
-#     if len(possiblePath) > 1:
-#         crossroad.append(actualposition)
-#         print("je me déplace à l'emplacement : {}".format(possiblePath[0]))
-#         while len(possiblePath) > 1:
-#             actualposition = possiblePath[0]
-#             move(actualposition, movecount, crossroad)
-#             del possiblePath[0]
-#     elif len(possiblePath) == 1:
-#         print("je me déplace à l'emplacement : {}".format(possiblePath[0]))
-#         actualposition = possiblePath[0]
-#         move(actualposition, movecount, crossroad)
-#     if len(possiblePath) == 0:
-#         return
-#
-#
-#
-#
-#     # print(actualposition)
-#     # if labyrinthe[actualposition[0]][actualposition[1]] == 2 & len(possiblePath) == 2:
-#     #     labyrinthe[actualposition[0]][actualposition[1]] = 1
-#     # if len(possiblePath) == 1:
-#     #     labyrinthe[actualposition[0]][actualposition[1]] = 1
-#     #     actualposition = possiblePath[0]
-#     #     print(actualposition)
-#     #     possiblePath = checkAllDirection(actualposition)
-#     #     move(actualposition, possiblePath)
-#     # else:
-#     #     labyrinthe[actualposition[0]][actualposition[1]] = 2
-#     #     actualposition = possiblePath[0]
-#     #     possiblePath = checkAllDirection(actualposition)
-#     #     move(actualposition, possiblePath)
-#
-#
-#
-# def checkAllDirection(coord):
-#     possiblePath = []
-#     # bloc Sud
-#     if coord[0] +1 > len(labyrinthe) - 1 or (labyrinthe[coord[0] +1][coord[1]] != 0 and labyrinthe[coord[0] +1][coord[1]] != 'G'):
-#         S = None
-#     else:
-#         S = [coord[0] +1, coord[1]]
-#
-#     # bloc Est
-#     if coord[1] +1 > len(labyrinthe[0]) -1 or (labyrinthe[coord[0]][coord[1]+1] != 0 and labyrinthe[coord[0]][coord[1]+1] != 'G'):
-#         E = None
-#     else:
-#         E = [coord[0], coord[1] + 1]
-#
-#     # bloc Nord
-#     if coord[0] - 1 < 0 or (labyrinthe[coord[0]-1][coord[1]] != 0 and labyrinthe[coord[0]-1][coord[1]] != 'G'):
-#         N = None
-#     else:
-#         N = [coord[0] -1, coord[1]]
-#
-#     # bloc Ouest
-#     if coord[1] - 1 < 0 or (labyrinthe[coord[0]][coord[1] -1] != 0 and labyrinthe[coord[0]][coord[1] -1] != 'G'):
-#         O = None
-#     else:
-#         O = [coord[0], coord[1] -1]
-#
-#     if S != None:
-#         possiblePath.append(S)
-#     if E != None:
-#         possiblePath.append(E)
-#     if N != None:
-#         possiblePath.append(N)
-#     if O != None:
-#         possiblePath.append(O)
-#
-#     print("chemin possible depuis la case {} : {}".format(coord, possiblePath))
-#     return possiblePath
+def move(actualposition, nextposition):
+    global movecount
+
+    if movecount == 0:
+        movecount += 1
+        labyrinthe[actualposition[0]][actualposition[1]] = movecount
+        print("je commence à la position {}".format(actualposition))
+        displaylaby(labyrinthe)
+    else:
+        print("je me déplace à la position {}".format(nextposition))
+        actualposition = nextposition
+        movecount += 1
+        if labyrinthe[actualposition[0]][actualposition[1]] == 'G':
+            print("j'ai gagné en {} coups à la position {}".format(movecount, actualposition))
+            return actualposition
+        # marquage du passage
+        labyrinthe[actualposition[0]][actualposition[1]] = movecount
+        displaylaby(labyrinthe)
+
+    # si la case au SUD est dans le labyrinthe et que la case est vide ou G
+    if actualposition[0] + 1 <= len(labyrinthe) - 1 and ((labyrinthe[actualposition[0] +1][actualposition[1]] == 0) or
+                                                         (labyrinthe[actualposition[0] +1][actualposition[1]] == 'G')):
+        # déplacement au SUD
+        nextposition = actualposition[0]+1, actualposition[1]
+        result = move(actualposition, nextposition)
+        if result is not None:
+            return result
+
+    # si la case à l'EST est dans le labyrinthe et que la case est vide ou G
+    if actualposition[1] + 1 <= len(labyrinthe[0]) - 1 and ((labyrinthe[actualposition[0]][actualposition[1] + 1] == 0) or
+                                                            (labyrinthe[actualposition[0]][actualposition[1] + 1] == 'G')):
+        # déplacement à l'EST
+        nextposition = actualposition[0], actualposition[1] +1
+        result = move(actualposition, nextposition)
+        if result is not None:
+            return result
+
+    # si la case au NORD est dans le labyrinthe et que la case est vide ou G
+    if actualposition[0] - 1 >= 0 and ((labyrinthe[actualposition[0] - 1][actualposition[1]] == 0) or
+                                       (labyrinthe[actualposition[0] - 1][actualposition[1]] == 'G')):
+        # déplacement au NORD
+        nextposition = actualposition[0] -1, actualposition[1]
+        result = move(actualposition, nextposition)
+        if result is not None:
+            return result
+
+    # si la case à l'OUEST est dans le labyrinthe et que la case est vide ou G
+    if (actualposition[1] - 1) >= 0 and ((labyrinthe[actualposition[0]][actualposition[1] - 1] == 'G') or
+                                         (labyrinthe[actualposition[0]][actualposition[1] - 1] == 0)):
+        # déplacement à l'OUEST
+        nextposition = actualposition[0], actualposition[1] -1
+        result = move(actualposition, nextposition)
+        if result is not None:
+            return result
+    return
 
 
 if __name__ == '__main__':
-    displaylaby(labyrinthe)
     startposition = [0, 0]
-    move(startposition)
-    # crossroad = []
-    # movecount = 0
-    # move(startposition, movecount, crossroad)
+    nextposition = [0,0]
+    displaylaby(labyrinthe)
+    move(startposition, nextposition)
